@@ -1,0 +1,5 @@
+from .character import CHARACTER_CARD_PROMPT
+from .memory import MEMORY_ANALYSIS_PROMPT
+from .router import ROUTER_PROMPT
+
+__all__ = ["CHARACTER_CARD_PROMPT", "MEMORY_ANALYSIS_PROMPT", "ROUTER_PROMPT"]
