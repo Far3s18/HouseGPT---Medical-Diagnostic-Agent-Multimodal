@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.sqlite3
+
+# Virtual environments
+venv/
+.env
+.venv/
+
+# Poetry cache
+.poetry/
+poetry.lock
+
+data/
+
+# IDE / Editor
+.vscode/
+*.idea/
+
+# Logs
+*.log
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+.cache
+.ipynb_checkpoints
+
+# Temporary files
+*.log
+*.tmp
+*.bak
