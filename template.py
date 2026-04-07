@@ -10,6 +10,7 @@ list_files = [
     '.env',
     '.pre-commit-config.yaml',
     '.gitignore',
+    'images/',
     'docs/readme.md',
     'notebooks/trial.ipynb',
     'src/house_gpt/__init__.py',
