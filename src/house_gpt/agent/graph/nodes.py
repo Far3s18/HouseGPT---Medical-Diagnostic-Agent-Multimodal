@@ -4,6 +4,7 @@ from house_gpt.agent.helpers.model_factory import get_small_model, get_large_mod
 from house_gpt.agent.chains import get_router_chain, get_character_response_chain
 from house_gpt.memory.ltm.memory_manager import get_memory_manager
 from house_gpt.schedules.context_generation import ScheduleContextGenerator
+from house_gpt.agent.helpers.formatter import get_format_memories
 from house_gpt.core.settings import settings
 from langchain_core.messages import AIMessage, HumanMessage, RemoveMessage
 from langchain_core.runnables import RunnableConfig
@@ -28,7 +29,7 @@ def memory_injection_node(state: AIHouseState):
     recent_context = " ".join([m.content for m in state["messages"][-3:]])
     memories = memory_manager.get_relevant_memories(recent_context)
 
-    memory_context = memory_manager.format_memories_for_prompt(memories)
+    memory_context = get_format_memories(memories)
 
     return {"memory_context": memory_context}
 
