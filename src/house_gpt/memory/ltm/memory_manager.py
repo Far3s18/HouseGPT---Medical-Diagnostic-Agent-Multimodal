@@ -47,11 +47,6 @@ class MemoryManager:
                 self.logger.debug(f"Memory: '{memory.text}'", score=f"{memory.score:.2f}")
         return [memory.text for memory in memories]
 
-    def format_memories_for_prompt(self, memories: List[str]) -> str:
-        if not memories:
-            return ""
-        return "\n".join(f"- {memory}" for memory in memories)
-
 
 def get_memory_manager(user_id: str) -> MemoryManager:
     return MemoryManager(user_id)
