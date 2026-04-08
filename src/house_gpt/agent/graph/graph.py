@@ -51,17 +51,4 @@ def save_graph_image(graph, filename: str = "house_gpt_graph.png"):
 
 def get_graph_builder():
     graph = create_workflow_graph().compile()
-    save_graph_image(graph)
     return graph
-
-if __name__ == "__main__":
-    import asyncio
-    async def main():
-        app = get_graph_builder()
-        response = await app.ainvoke({
-            "user_id": "001",
-            "messages": [HumanMessage(content="What is the mechanism of action of vancomycin and why is it ineffective against gram-negative bacteria?")]
-        })
-        print(response)
-
-    asyncio.run(main())
