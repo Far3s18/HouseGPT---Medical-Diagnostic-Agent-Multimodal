@@ -58,7 +58,7 @@ class MedicalBooksRAG:
                 metadata={k:v for k, v in hit.payload.items() if k not in ("text", "book_title")},
                 score=hit.score
             )
-            for hit in results
+            for hit in results if hit.score >= self.SIMILARITY_THRESHOLD
         ]
 
 @lru_cache
