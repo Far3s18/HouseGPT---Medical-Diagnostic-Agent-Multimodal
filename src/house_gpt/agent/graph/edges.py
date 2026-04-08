@@ -12,9 +12,11 @@ def should_summarize_conversation(state: AIHouseState,) -> Literal["summarize_co
 
     return END
 
-def select_workflow(state: AIHouseState) -> Literal["conversation_node"]:
+def select_workflow(state: AIHouseState) -> Literal["conversation_node", "medical_rag_node"]:
     workflow = state["workflow"]
     if workflow == "conversation":
         return "conversation_node"
+    elif workflow == "rag":
+        return "medical_rag_node"
     else:
         return END

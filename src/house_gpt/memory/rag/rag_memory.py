@@ -20,7 +20,7 @@ class MedicalBooksRAG:
     def __init__(self) -> None:
         self._validate_env_vars()
         self.dense_model = OllamaEmbeddings(model="qwen3-embedding:8b")
-        self.sparse_model = SparseTextEmbedding(model_name="prithivida/Splade_PP_en_v1")
+        self.sparse_model = SparseTextEmbedding(model_name="prithivida/Splade_PP_en_v1", cache_dir="/home/fa-res/.cache/fastembed")
         self.client = QdrantClient(
             url=os.getenv("QDRANT_URL"),
             api_key=os.getenv("QDRANT_API_KEY"),

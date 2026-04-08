@@ -13,3 +13,12 @@ def get_format_memories(memories: List[str]) -> str:
     if not memories:
         return ""
     return "\n".join(f"- {memory}" for memory in memories)
+
+def build_rag_context(results: list) -> str:
+    parts = []
+    for i, r in enumerate(results, 1):
+        parts.append(
+            f"[{i}] Source: {r.book_title if hasattr(r, 'book_title') else 'Unknown'} "
+            f"| Relevance: {r.score:.2f}\n{r.text}"
+        )
+    return "\n\n".join(parts)

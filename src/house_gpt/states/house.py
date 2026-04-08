@@ -9,3 +9,4 @@ class AIHouseState(MessagesState):
     current_activity: str
     apply_activity: bool
     memory_context: str
+    medical_context: str | None
