@@ -21,13 +21,14 @@ async def memory_extraction_node(state: AIHouseState):
     print(f"[TIMER] memory_extraction_node: {time.time() - t:.2f}s")
     return {}
 
-def memory_injection_node(state: AIHouseState):
+async def memory_injection_node(state: AIHouseState):
     t = time.time()
     memory_manager = get_memory_manager(state["user_id"])
-
     recent_context = " ".join([m.content for m in state["messages"][-3:]])
-    memories = memory_manager.get_relevant_memories(recent_context)
-
+    loop = asyncio.get_event_loop()
+    memories = await loop.run_in_executor(
+        None, memory_manager.get_relevant_memories, recent_context
+    )
     memory_context = get_format_memories(memories)
     print(f"[TIMER] inject_node: {time.time() - t:.2f}s")
     return {"memory_context": memory_context}

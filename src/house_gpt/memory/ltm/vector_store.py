@@ -1,6 +1,7 @@
 import os
 from house_gpt.memory.models import Memory
 from house_gpt.core.settings import settings
+from house_gpt.core.logger import AppLogger
 from functools import lru_cache
 from qdrant_client import QdrantClient
 from qdrant_client.models import (
@@ -13,6 +14,7 @@ from langchain_ollama.embeddings import OllamaEmbeddings
 from typing import List, Optional
 
 
+logger = AppLogger("VectorStore")
 
 _qdrant_client = QdrantClient(url=settings.QDRANT_URL, api_key=settings.QDRANT_API_KEY, timeout=60)
 _embedding_model = OllamaEmbeddings(model=settings.EMBEDDING_MODEL_NAME)
@@ -65,7 +67,7 @@ class VectorStore:
             metadata["id"] = similar_memory.id
 
         
-        self.logger.info(f"Storing new memory: '{analysis.formatted_memory}'", user_id=self.user_id)
+        logger.info(f"Storing new memory: '{text}'")
 
         embedding = self.model.embed_query(text)
         point = PointStruct(
