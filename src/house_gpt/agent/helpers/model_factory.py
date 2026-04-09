@@ -20,3 +20,11 @@ def get_large_model(temperature: float = 0.7):
         temperature=temperature,
         max_retries=2
     )
+
+def get_image_to_text_model():
+    return ChatOpenAI(
+        model=settings.ITT_MODEL_NAME,
+        base_url=settings.OPENROUTER_URL,
+        api_key=settings.OPENROUTER_API_KEY,
+        max_tokens=1024,
+    )
