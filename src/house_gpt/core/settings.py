@@ -16,7 +16,7 @@ class Settings(BaseSettings):
     LARGE_TEXT_MODEL_NAME: str = "openai/gpt-4o-mini"
     SMALL_TEXT_MODEL_NAME: str = "openai/gpt-4o-mini"
     EMBEDDING_MODEL_NAME: str = "qwen3-embedding:8b"
-    STT_MODEL_NAME: str = "medium"
+    STT_MODEL_NAME: str = "base"
     TTS_MODEL_NAME: str = "eleven_flash_v2_5"
     TTI_MODEL_NAME: str = "black-forest-labs/FLUX.1-schnell-Free"
     ITT_MODEL_NAME: str = "qwen3-vl:8b"
