@@ -19,7 +19,7 @@ class Settings(BaseSettings):
     STT_MODEL_NAME: str = "base"
     TTS_MODEL_NAME: str = "eleven_flash_v2_5"
     TTI_MODEL_NAME: str = "black-forest-labs/FLUX.1-schnell-Free"
-    ITT_MODEL_NAME: str = "qwen3-vl:8b"
+    ITT_MODEL_NAME: str = "qwen/qwen3-vl-32b-instruct"
 
     MEMORY_TOP_K: int = 3
     ROUTER_MESSAGES_TO_ANALYZE: int = 3
