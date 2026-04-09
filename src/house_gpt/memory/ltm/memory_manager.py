@@ -9,6 +9,7 @@ from langchain_core.messages import BaseMessage
 from datetime import datetime
 from typing import List
 
+
 class MemoryManager:
     def __init__(self, user_id: str):
         self.user_id = user_id
@@ -26,12 +27,6 @@ class MemoryManager:
 
         analysis = await self._analyze_memory(message.content)
         if analysis.is_important and analysis.formatted_memory:
-            similar = self.vector_store.find_similarity_memory(analysis.formatted_memory)
-            if similar:
-                self.logger.info(f"Similar memory already exists: '{analysis.formatted_memory}'", user_id=self.user_id)
-                return
-            
-            self.logger.info(f"Storing new memory: '{analysis.formatted_memory}'", user_id=self.user_id)
             self.vector_store.store_memory(
                 text=analysis.formatted_memory,
                 metadata={

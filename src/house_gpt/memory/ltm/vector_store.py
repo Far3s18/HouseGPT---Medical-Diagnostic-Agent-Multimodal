@@ -12,6 +12,11 @@ from qdrant_client.models import (
 from langchain_ollama.embeddings import OllamaEmbeddings
 from typing import List, Optional
 
+
+
+_qdrant_client = QdrantClient(url=settings.QDRANT_URL, api_key=settings.QDRANT_API_KEY, timeout=60)
+_embedding_model = OllamaEmbeddings(model=settings.EMBEDDING_MODEL_NAME)
+
 class VectorStore:
     REQUIRED_ENV_VARS = ["QDRANT_URL", "QDRANT_API_KEY"]
     COLLECTION_NAME = 'long_term_memory'
@@ -19,8 +24,8 @@ class VectorStore:
 
     def __init__(self, user_id: str) -> None:
         self._validate_env_vars()
-        self.model = OllamaEmbeddings(model=settings.EMBEDDING_MODEL_NAME)
-        self.client = QdrantClient(url=settings.QDRANT_URL, api_key=settings.QDRANT_API_KEY, timeout=60)
+        self.model = _embedding_model
+        self.client = _qdrant_client
         self._user_id = user_id
 
     def _validate_env_vars(self) -> None:
@@ -55,12 +60,12 @@ class VectorStore:
         return None
 
     def store_memory(self, text: str, metadata: dict) -> None:
-        # if not self._collection_exists():
-        #     self._create_collection()
-
         similar_memory = self.find_similarity_memory(text)
         if similar_memory and similar_memory.id:
             metadata["id"] = similar_memory.id
+
+        
+        self.logger.info(f"Storing new memory: '{analysis.formatted_memory}'", user_id=self.user_id)
 
         embedding = self.model.embed_query(text)
         point = PointStruct(
@@ -76,9 +81,6 @@ class VectorStore:
         self.client.upsert(collection_name=self.COLLECTION_NAME, points=[point])
 
     def search_memories(self, query: str, k: int = 5) -> List[Memory]:
-        if not self._collection_exists():
-            return []
-
         query_embedding = self.model.embed_query(query)
         results = self.client.query_points(
             collection_name=self.COLLECTION_NAME,

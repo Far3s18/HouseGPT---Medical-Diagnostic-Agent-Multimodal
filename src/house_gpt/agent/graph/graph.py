@@ -27,7 +27,8 @@ def create_workflow_graph():
     graph_builder.add_node("summarize_conversation_node", summarize_conversation_node)
 
     graph_builder.add_edge(START, "memory_extraction_node")
-    graph_builder.add_edge("memory_extraction_node", "router_node")
+    graph_builder.add_edge(START, "router_node")
+    graph_builder.add_edge("memory_extraction_node", "context_injection_node")
     graph_builder.add_edge("router_node", "context_injection_node")
     graph_builder.add_edge("context_injection_node", "memory_injection_node")
     graph_builder.add_conditional_edges("memory_injection_node", select_workflow)
@@ -48,6 +49,7 @@ def save_graph_image(graph, filename: str = "house_gpt_graph.png"):
 
     print(f"Graph saved → {output_path.resolve()}")
     return output_path
+
 
 def get_graph_builder():
     graph = create_workflow_graph().compile()

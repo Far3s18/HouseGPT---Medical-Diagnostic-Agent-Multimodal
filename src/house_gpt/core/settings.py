@@ -10,8 +10,11 @@ class Settings(BaseSettings):
     QDRANT_PORT: str = "6333"
     QDRANT_HOST: str | None = None
 
-    LARGE_TEXT_MODEL_NAME: str = "qwen2.5:7b"
-    SMALL_TEXT_MODEL_NAME: str = "qwen2.5:7b"
+    OPENROUTER_URL: str
+    OPENROUTER_API_KEY: str
+
+    LARGE_TEXT_MODEL_NAME: str = "openai/gpt-4o-mini"
+    SMALL_TEXT_MODEL_NAME: str = "openai/gpt-4o-mini"
     EMBEDDING_MODEL_NAME: str = "qwen3-embedding:8b"
     STT_MODEL_NAME: str = "medium"
     TTS_MODEL_NAME: str = "eleven_flash_v2_5"

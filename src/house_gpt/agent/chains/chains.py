@@ -1,9 +1,12 @@
+from functools import lru_cache
 from house_gpt.agent.helpers.model_factory import get_small_model, get_large_model
 from house_gpt.agent.helpers.formatter import AsteriskRemovalParser
 from house_gpt.states.response import RouterResponse
 from house_gpt.agent.prompts import ROUTER_PROMPT, CHARACTER_CARD_PROMPT
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 
+
+@lru_cache(maxsize=1)
 def get_router_chain():
     model = get_small_model(temperature=0.2).with_structured_output(RouterResponse)
 

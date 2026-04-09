@@ -1,12 +1,12 @@
 from fastapi import APIRouter, Request, Response, UploadFile, File, Form
 from langchain_core.messages import HumanMessage, AIMessage
-from langgraph.checkpoint.sqlite.aio import AsyncSqliteSaver
-from house_gpt.agent.graph.graph import create_workflow_graph
 from fastapi.responses import JSONResponse
 from house_gpt.multimodal.speech import SpeechToText
 from house_gpt.core.logger import AppLogger
 from house_gpt.core.settings import settings
 from house_gpt.services.graph_services import invoke_graph
+from house_gpt.core.graph_instance import get_graph
+import time
 
 logger = AppLogger("API")
 chat_router = APIRouter()
@@ -17,6 +17,7 @@ stt = SpeechToText()
 @chat_router.post("/chat")
 async def chat_handler(request: Request):
     try:
+        start = time.time()
         data = await request.json()
         message = data.get("message", "").strip()
         session_id = data.get("session_id", "")
@@ -30,18 +31,14 @@ async def chat_handler(request: Request):
             f"[START] session={session_id} message={message[:50]}"
         )
 
-        async with AsyncSqliteSaver.from_conn_string(settings.SHORT_TERM_MEMORY_DB_PATH) as memory:
-            graph = create_workflow_graph().compile(checkpointer=memory)
-            await graph.ainvoke(
-                {"messages": [HumanMessage(content=message)], "user_id": session_id},
-                {"configurable": {"thread_id": session_id}},
-            )
-            output_state = await graph.aget_state(
-                config={"configurable": {"thread_id": session_id}}
-            )
+        output_state = await invoke_graph(message, session_id)
 
         response_message = output_state.values["messages"][-1].content
         workflow = output_state.values.get("workflow", "conversation")
+
+        end = time.time()
+        duration = end - start
+        print(f"Duration Taked: {duration}")
 
         return JSONResponse(
             content={
