@@ -16,7 +16,7 @@ from typing import List, Optional
 
 logger = AppLogger("VectorStore")
 
-_qdrant_client = QdrantClient(url=settings.QDRANT_URL, api_key=settings.QDRANT_API_KEY, timeout=60)
+_qdrant_client = QdrantClient(url=settings.QDRANT_URL, api_key=settings.QDRANT_API_KEY, timeout=10, check_compatibility=False)
 _embedding_model = OllamaEmbeddings(model=settings.EMBEDDING_MODEL_NAME)
 
 class VectorStore:
@@ -83,6 +83,10 @@ class VectorStore:
         self.client.upsert(collection_name=self.COLLECTION_NAME, points=[point])
 
     def search_memories(self, query: str, k: int = 5) -> List[Memory]:
+        if not self._collection_exists():
+            logger.warning(f"Collection '{self.COLLECTION_NAME}' does not exist yet")
+            return []
+
         query_embedding = self.model.embed_query(query)
         results = self.client.query_points(
             collection_name=self.COLLECTION_NAME,

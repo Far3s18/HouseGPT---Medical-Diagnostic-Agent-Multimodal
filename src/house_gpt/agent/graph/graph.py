@@ -53,8 +53,6 @@ def save_graph_image(graph, filename: str = "house_gpt_graph.png"):
 
     output_path = output_dir / filename
     output_path.write_bytes(image_bytes)
-
-    print(f"Graph saved → {output_path.resolve()}")
     return output_path
 
 

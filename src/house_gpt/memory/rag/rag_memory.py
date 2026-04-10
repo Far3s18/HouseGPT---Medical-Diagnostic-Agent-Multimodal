@@ -8,6 +8,9 @@ from langchain_ollama.embeddings import OllamaEmbeddings
 from typing import List, Optional
 from qdrant_client.models import Prefetch, FusionQuery, Fusion, SparseVector
 
+_qdrant_client = QdrantClient(url=os.getenv("QDRANT_URL"), api_key=os.getenv("QDRANT_API_KEY"), timeout=60)
+_dense_model = OllamaEmbeddings(model=settings.EMBEDDING_MODEL_NAME)
+_sparse_model = SparseTextEmbedding(model_name="prithivida/Splade_PP_en_v1", cache_dir="/home/fa-res/.cache/fastembed")
 
 class MedicalBooksRAG:
     REQUIRED_ENV_VARS = ["QDRANT_URL", "QDRANT_API_KEY"]
@@ -19,13 +22,9 @@ class MedicalBooksRAG:
 
     def __init__(self) -> None:
         self._validate_env_vars()
-        self.dense_model = OllamaEmbeddings(model=settings.EMBEDDING_MODEL_NAME)
-        self.sparse_model = SparseTextEmbedding(model_name="prithivida/Splade_PP_en_v1", cache_dir="/home/fa-res/.cache/fastembed")
-        self.client = QdrantClient(
-            url=os.getenv("QDRANT_URL"),
-            api_key=os.getenv("QDRANT_API_KEY"),
-            timeout=60
-        )
+        self.dense_model = _dense_model
+        self.sparse_model = _sparse_model
+        self.client = _qdrant_client
 
     def _validate_env_vars(self) -> None:
         missings_vars = [var for var in self.REQUIRED_ENV_VARS if not os.getenv(var)]

@@ -2,9 +2,11 @@ import time
 from langchain_core.messages import AIMessage
 from langchain_core.runnables import RunnableConfig
 from house_gpt.states.house import AIHouseState
+from house_gpt.core.logger import AppLogger
 from house_gpt.agent.chains import get_character_response_chain
 from house_gpt.schedules.context_generation import ScheduleContextGenerator
 
+logger = AppLogger("Conversation-Node")
 
 async def conversation_node(state: AIHouseState, config: RunnableConfig):
     t = time.time()
@@ -18,5 +20,5 @@ async def conversation_node(state: AIHouseState, config: RunnableConfig):
         "current_activity": current_activity,
         "memory_context": memory_context
     }, config=config)
-    print(f"[TIMER] conversation_node: {time.time() - t:.2f}s")
+    logger.debug(f"[TIMER] Conversation: {time.time() - t:.2f}s")
     return {"messages": AIMessage(content=response)}

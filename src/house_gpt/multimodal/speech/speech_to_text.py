@@ -24,20 +24,21 @@ class SpeechToText:
                 tmp.write(audio_data)
                 temp_file_path = tmp.name
 
-            try:
-                loop = asyncio.get_event_loop()
-                result = await loop.run_in_executor(
-                    None, self._transcribe_sync, temp_file_path
-                )
+            loop = asyncio.get_running_loop()
+            result = await asyncio.wait_for(
+                loop.run_in_executor(None, self._transcribe_sync, temp_file_path),
+                timeout=30
+            )
 
-                if not result:
-                    raise SpeechToTextError("Transcription result is empty")
+            if not result:
+                raise SpeechToTextError("Transcription result is empty")
 
-                return result
+            return result
 
-            finally:
-                os.unlink(temp_file_path)
-
+        except asyncio.TimeoutError:
+            raise SpeechToTextError("Transcription timed out after 30 seconds")
         except Exception as e:
             raise SpeechToTextError(f"Speech-to-Text conversion failed: {str(e)}") from e
-
+        finally:
+            if temp_file_path and os.path.exists(temp_file_path):
+                os.unlink(temp_file_path)
