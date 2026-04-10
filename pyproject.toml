@@ -17,7 +17,6 @@ dependencies = [
     "python-dotenv (>=1.2.2,<2.0.0)",
     "loguru (>=0.7.3,<0.8.0)",
     "requests (>=2.33.1,<3.0.0)",
-    "langchain (>=1.2.15,<2.0.0)",
     "langchain-core (>=1.2.26,<2.0.0)",
     "langchain-qdrant (>=1.1.0,<2.0.0)",
     "pydantic-settings (>=2.13.1,<3.0.0)",
@@ -34,8 +33,6 @@ dependencies = [
     "langgraph-checkpoint-postgres (>=3.0.5,<4.0.0)",
     "groq (>=1.1.2,<2.0.0)",
     "python-multipart (>=0.0.24,<0.0.25)",
-    "langchain-ollama (>=1.1.0,<2.0.0)",
-    "openai-whisper (>=20250625,<20250626)",
 ]
 
 [tool.poetry]

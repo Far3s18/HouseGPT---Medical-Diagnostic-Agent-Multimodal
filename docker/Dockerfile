@@ -6,8 +6,9 @@ RUN apt-get update && apt-get install -y \
     ffmpeg \
     && rm -rf /var/lib/apt/lists/*
 
-
 RUN pip install poetry==2.3.2
+
+RUN poetry config virtualenvs.create false
 
 WORKDIR /app
 
@@ -21,13 +22,13 @@ RUN mkdir -p logs
 
 ENV PYTHONPATH=/app/src
 
-EXPOSE 8000
+EXPOSE 7860
 
 CMD ["gunicorn", "house_gpt.api.v1.app:app", \
-     "-w", "4", \
+     "-w", "2", \
      "-k", "uvicorn.workers.UvicornWorker", \
-     "--bind", "0.0.0.0:8000", \
+     "--bind", "0.0.0.0:7860", \
      "--timeout", "120", \
      "--keep-alive", "5", \
-     "--access-logfile", "logs/access.log", \
-     "--error-logfile", "logs/error.log"]
+     "--access-logfile", "-", \
+     "--error-logfile", "-"]

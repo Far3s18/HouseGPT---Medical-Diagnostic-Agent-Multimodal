@@ -45,18 +45,19 @@ def create_workflow_graph():
 
     return graph_builder
 
-def save_graph_image(graph, filename: str = "house_gpt_graph.png"):
-    output_dir = Path("images")
-    output_dir.mkdir(exist_ok=True)
-
-    image_bytes = graph.get_graph().draw_mermaid_png()
-
-    output_path = output_dir / filename
-    output_path.write_bytes(image_bytes)
-    return output_path
+def _save_graph_image(graph, filename: str = "house_gpt_graph.png") -> None:
+    try:
+        output_dir = Path("images")
+        output_dir.mkdir(exist_ok=True)
+        image_bytes = graph.get_graph().draw_mermaid_png()
+        output_path = output_dir / filename
+        output_path.write_bytes(image_bytes)
+        logger.info(f"[Graph] Diagram saved to {output_path}")
+    except Exception as e:
+        logger.warning(f"[Graph] Could not save graph image (non-fatal): {e}")
 
 
 def get_graph_builder():
     graph = create_workflow_graph().compile()
-    save_graph_image(graph)
+    _save_graph_image(graph)
     return graph

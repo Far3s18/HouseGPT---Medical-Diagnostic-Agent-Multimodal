@@ -4,12 +4,12 @@ from house_gpt.core.settings import settings
 from functools import lru_cache
 from qdrant_client import QdrantClient
 from fastembed import SparseTextEmbedding
-from langchain_ollama import OllamaEmbeddings 
+from langchain_openai import OpenAIEmbeddings
 from typing import List, Optional
 from qdrant_client.models import Prefetch, FusionQuery, Fusion, SparseVector
 
 _qdrant_client = QdrantClient(url=os.getenv("QDRANT_URL"), api_key=os.getenv("QDRANT_API_KEY"), timeout=60)
-_dense_model = OllamaEmbeddings(model=settings.EMBEDDING_MODEL_NAME)
+_dense_model = OpenAIEmbeddings(model=settings.EMBEDDING_MODEL_NAME, base_url=settings.OPENROUTER_URL, api_key=settings.OPENROUTER_API_KEY)
 _sparse_model = SparseTextEmbedding(model_name="prithivida/Splade_PP_en_v1", cache_dir="/home/fa-res/.cache/fastembed")
 
 class MedicalBooksRAG:

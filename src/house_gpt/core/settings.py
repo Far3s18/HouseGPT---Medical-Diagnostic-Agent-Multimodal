@@ -9,11 +9,16 @@ class Settings(BaseSettings):
         extra="ignore",
     )
 
+    OPENROUTER_URL: str
+    OPENROUTER_API_KEY: str
+
+    GROQ_API_KEY: str
+
     SMALL_TEXT_MODEL_NAME: str
     LARGE_TEXT_MODEL_NAME: str
     ITT_MODEL_NAME: str
 
-    STT_MODEL_NAME: str = "base"
+    STT_MODEL_NAME: str = "whisper-large-v3"
 
     EMBEDDING_MODEL_NAME: str
 

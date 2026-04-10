@@ -10,6 +10,9 @@ logger = AppLogger("Router-Node")
 async def router_node(state: AIHouseState):
     t = time.time()
     chain = get_router_chain()
-    response = await chain.ainvoke({"messages": state["messages"][-settings.ROUTER_MESSAGES_TO_ANALYZE:]})
-    print(f"[TIMER] router_node: {time.time() - t:.2f}s")
-    return {"workflow": response.response_type}
+    response = await chain.ainvoke(
+        {"messages": state["messages"][-settings.ROUTER_MESSAGES_TO_ANALYZE:]}
+    )
+    workflow = response.response_type
+    logger.info(f"[router] workflow={workflow} duration={time.time()-t:.3f}s")
+    return {"workflow": workflow}
