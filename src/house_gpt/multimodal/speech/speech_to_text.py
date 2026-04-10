@@ -1,44 +1,42 @@
-import os
 import asyncio
-import tempfile
-import whisper
+from groq import AsyncGroq
 from house_gpt.core.exceptions import SpeechToTextError
+from house_gpt.core.logger import AppLogger
 from house_gpt.core.settings import settings
+
+logger = AppLogger("SpeechToText")
+
 
 class SpeechToText:
     def __init__(self) -> None:
-        self.model = whisper.load_model(settings.STT_MODEL_NAME)
+        self.client = AsyncGroq(api_key=settings.GROQ_API_KEY)
+        self.model = settings.STT_MODEL_NAME
+        logger.info(f"[STT] Initialized with model={self.model}")
 
-    def _transcribe_sync(self, file_path: str) -> str:
-        result = self.model.transcribe(file_path)
-        return result.get("text", "").strip()
-
-    async def transcribe(self, audio_data: bytes) -> str:
+    async def transcribe(self, audio_data: bytes, filename: str = "audio.wav") -> str:
         if not audio_data:
-            raise ValueError("Audio data cannot be empty")
+            raise SpeechToTextError("Audio data cannot be empty")
 
-        temp_file_path = None
+        logger.info(f"[STT] Transcribing {len(audio_data)} bytes")
 
         try:
-            with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as tmp:
-                tmp.write(audio_data)
-                temp_file_path = tmp.name
-
-            loop = asyncio.get_running_loop()
-            result = await asyncio.wait_for(
-                loop.run_in_executor(None, self._transcribe_sync, temp_file_path),
-                timeout=30
+            response = await self.client.audio.transcriptions.create(
+                file=(filename, audio_data),
+                model=self.model,
+                language="en",
+                response_format="text",
             )
+
+            result = response.strip() if isinstance(response, str) else response.text.strip()
 
             if not result:
                 raise SpeechToTextError("Transcription result is empty")
 
+            logger.info(f"[STT] Done: {result[:80]!r}")
             return result
 
-        except asyncio.TimeoutError:
-            raise SpeechToTextError("Transcription timed out after 30 seconds")
+        except SpeechToTextError:
+            raise
         except Exception as e:
-            raise SpeechToTextError(f"Speech-to-Text conversion failed: {str(e)}") from e
-        finally:
-            if temp_file_path and os.path.exists(temp_file_path):
-                os.unlink(temp_file_path)
+            logger.error(f"[STT] Failed: {e}", exc_info=True)
+            raise SpeechToTextError(f"Transcription failed: {str(e)}") from e

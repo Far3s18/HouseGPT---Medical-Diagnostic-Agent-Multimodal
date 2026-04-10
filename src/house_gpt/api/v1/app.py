@@ -1,5 +1,4 @@
 import asyncio
-import aiosqlite
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 from slowapi import Limiter, _rate_limit_exceeded_handler
