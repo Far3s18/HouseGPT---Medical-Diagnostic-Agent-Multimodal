@@ -50,7 +50,7 @@ class ImageToText:
                 raise ImageToTextError("No response received from the vision model")
 
             description = response.content
-            self.logger.info(f"Generated image description: {description}")
+            self.logger.info(f"Generated image description: {description[:80]}...")
             return description
 
         except Exception as e:

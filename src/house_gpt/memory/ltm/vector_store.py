@@ -9,15 +9,14 @@ from qdrant_client.models import (
     Filter, FieldCondition, MatchValue,
     CreateFieldIndex, PayloadSchemaType
 )
-
-from langchain_ollama.embeddings import OllamaEmbeddings
+from langchain_openai import OpenAIEmbeddings
 from typing import List, Optional
 
 
 logger = AppLogger("VectorStore")
 
 _qdrant_client = QdrantClient(url=settings.QDRANT_URL, api_key=settings.QDRANT_API_KEY, timeout=10, check_compatibility=False)
-_embedding_model = OllamaEmbeddings(model=settings.EMBEDDING_MODEL_NAME)
+_embedding_model = OpenAIEmbeddings(model=settings.EMBEDDING_MODEL_NAME, base_url=settings.OPENROUTER_URL, api_key=settings.OPENROUTER_API_KEY)
 
 class VectorStore:
     REQUIRED_ENV_VARS = ["QDRANT_URL", "QDRANT_API_KEY"]
