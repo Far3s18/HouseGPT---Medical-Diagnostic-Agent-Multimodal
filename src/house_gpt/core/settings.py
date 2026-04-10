@@ -13,6 +13,8 @@ class Settings(BaseSettings):
     QDRANT_PORT: str = "6333"
     QDRANT_HOST: str | None = None
 
+    # EMBEDDING_URL: str
+
     OPENROUTER_URL: str
     OPENROUTER_API_KEY: str
 
@@ -21,7 +23,7 @@ class Settings(BaseSettings):
     LARGE_TEXT_MODEL_NAME: str = "openai/gpt-4o-mini"
     SMALL_TEXT_MODEL_NAME: str = "openai/gpt-4o-mini"
     EMBEDDING_MODEL_NAME: str = "qwen/qwen3-embedding-8b"
-    STT_MODEL_NAME: str = "whisper-large-v3"
+    STT_MODEL_NAME: str = "base"
     TTS_MODEL_NAME: str = "eleven_flash_v2_5"
     TTI_MODEL_NAME: str = "black-forest-labs/FLUX.1-schnell-Free"
     ITT_MODEL_NAME: str = "qwen/qwen3-vl-32b-instruct"

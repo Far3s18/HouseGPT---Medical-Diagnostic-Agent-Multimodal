@@ -14,7 +14,6 @@ logger = AppLogger("API")
 chat_router = APIRouter()
 limiter = Limiter(key_func=get_remote_address)
 
-stt = SpeechToText()
 itt = ImageToText()
 
 MAX_AUDIO_SIZE = 10 * 1024 * 1024
@@ -86,6 +85,7 @@ async def chat_handler(request: Request):
 @chat_router.post("/chat/audio")
 @limiter.limit("10/minute")
 async def chat_audio_handler(request: Request, session_id: str = Form(...), audio: UploadFile = File(...)):
+    stt = SpeechToText()
     start = time.time()
     try:
         if not session_id:

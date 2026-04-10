@@ -1,6 +1,6 @@
-import asyncio
 from fastapi import FastAPI
-from fastapi.responses import JSONResponse
+import aiosqlite
+import asyncio
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
@@ -14,13 +14,13 @@ from house_gpt.core.graph_instance import set_graph, set_pool, get_pool, get_gra
 from house_gpt.api.v1.routers.chat import chat_router
 from house_gpt.memory.ltm.vector_store import _qdrant_client
 
+
 logger = AppLogger("API-V1")
 
 app = FastAPI(title="HouseGPT API", version="1.0.0")
-
 limiter = Limiter(key_func=get_remote_address)
-
 app.state.limiter = limiter
+
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 app.add_middleware(SlowAPIMiddleware)
 
@@ -41,31 +41,31 @@ async def startup():
         await pool.open()
         set_pool(pool)
         logger.info("[STARTUP] PostgreSQL pool opened OK")
-    except Exception as e:
-        logger.error(f"[STARTUP] PostgreSQL pool FAILED: {e}", exc_info=True)
+    except Exception:
+        logger.error("[STARTUP] PostgreSQL pool FAILED", exc_info=True)
         raise
 
     try:
         checkpointer = AsyncPostgresSaver(pool)
         await checkpointer.setup()
         logger.info("[STARTUP] LangGraph checkpoint tables ready")
-    except Exception as e:
-        logger.error(f"[STARTUP] Checkpointer setup FAILED: {e}", exc_info=True)
+    except Exception:
+        logger.error("[STARTUP] Checkpointer setup FAILED", exc_info=True)
         raise
 
     try:
         graph = create_workflow_graph().compile(checkpointer=checkpointer)
         set_graph(graph)
         logger.info("[STARTUP] Graph compiled OK")
-    except Exception as e:
-        logger.error(f"[STARTUP] Graph compile FAILED: {e}", exc_info=True)
+    except Exception:
+        logger.error("[STARTUP] Graph compile FAILED", exc_info=True)
         raise
 
     try:
         _qdrant_client.get_collections()
         logger.info("[STARTUP] Qdrant connection OK")
-    except Exception as e:
-        logger.error(f"[STARTUP] Qdrant connection FAILED: {e}")
+    except Exception:
+        logger.error("[STARTUP] Qdrant connection FAILED", exc_info=True)
 
     logger.info("[STARTUP] HouseGPT ready")
 
@@ -97,13 +97,11 @@ async def detailed_health():
         checks["qdrant"] = "ok"
     except Exception as e:
         checks["qdrant"] = f"error: {str(e)}"
-
+    
     checks["graph"] = "ok" if get_graph() else "not initialized"
-
     status = "ok" if all(v == "ok" for v in checks.values()) else "degraded"
     code = 200 if status == "ok" else 503
-
+    
     return JSONResponse(content={"status": status, "checks": checks}, status_code=code)
-
 
 app.include_router(chat_router, prefix="/api/v1")

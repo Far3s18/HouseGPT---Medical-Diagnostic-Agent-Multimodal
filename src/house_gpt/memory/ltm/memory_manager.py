@@ -1,5 +1,6 @@
 import uuid
 from house_gpt.core.logger import AppLogger
+from functools import lru_cache
 from house_gpt.agent.helpers.model_factory import get_small_model
 from house_gpt.states.memory import MemoryAnalysis
 from house_gpt.agent.prompts import MEMORY_ANALYSIS_PROMPT
@@ -43,5 +44,6 @@ class MemoryManager:
         return [memory.text for memory in memories]
 
 
+@lru_cache(maxsize=256)
 def get_memory_manager(user_id: str) -> MemoryManager:
     return MemoryManager(user_id)

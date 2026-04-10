@@ -1,42 +1,35 @@
+import os
 import asyncio
-from groq import AsyncGroq
+import tempfile
+import whisper
 from house_gpt.core.exceptions import SpeechToTextError
-from house_gpt.core.logger import AppLogger
 from house_gpt.core.settings import settings
-
-logger = AppLogger("SpeechToText")
-
 
 class SpeechToText:
     def __init__(self) -> None:
-        self.client = AsyncGroq(api_key=settings.GROQ_API_KEY)
-        self.model = settings.STT_MODEL_NAME
-        logger.info(f"[STT] Initialized with model={self.model}")
+        self.model = whisper.load_model(settings.STT_MODEL_NAME)
+    
+    def _transcribe_sync(self, file_path: str) -> str:
+        result = self.model.transcribe(file_path)
+        return result.get("text", "").strip()
 
-    async def transcribe(self, audio_data: bytes, filename: str = "audio.wav") -> str:
+    async def transcribe(self, audio_data: bytes) -> str:
         if not audio_data:
-            raise SpeechToTextError("Audio data cannot be empty")
-
-        logger.info(f"[STT] Transcribing {len(audio_data)} bytes")
-
+            raise ValueError("Audio data cannot be empty")
+        temp_file_path = None
         try:
-            response = await self.client.audio.transcriptions.create(
-                file=(filename, audio_data),
-                model=self.model,
-                language="en",
-                response_format="text",
-            )
-
-            result = response.strip() if isinstance(response, str) else response.text.strip()
-
-            if not result:
-                raise SpeechToTextError("Transcription result is empty")
-
-            logger.info(f"[STT] Done: {result[:80]!r}")
-            return result
-
-        except SpeechToTextError:
-            raise
+            with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as tmp:
+                tmp.write(audio_data)
+                temp_file_path = tmp.name
+            try:
+                loop = asyncio.get_event_loop()
+                result = await loop.run_in_executor(
+                    None, self._transcribe_sync, temp_file_path
+                )
+                if not result:
+                    raise SpeechToTextError("Transcription result is empty")
+                return result
+            finally:
+                os.unlink(temp_file_path)
         except Exception as e:
-            logger.error(f"[STT] Failed: {e}", exc_info=True)
-            raise SpeechToTextError(f"Transcription failed: {str(e)}") from e
+            raise SpeechToTextError(f"Speech-to-Text conversion failed: {str(e)}") from e
