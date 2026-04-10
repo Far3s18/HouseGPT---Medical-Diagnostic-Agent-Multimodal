@@ -1,10 +1,10 @@
-# 🏠 HouseGPT
+# HouseGPT
 
 > **A production-grade, multimodal AI assistant** built on LangGraph, powered by Dr. House's personality — combining long-term memory, RAG-augmented medical knowledge, speech/image understanding, and persistent multi-session conversation.
 
 ---
 
-## 📋 Table of Contents
+## Table of Contents
 
 - [Architecture Overview](#architecture-overview)
 - [Tech Stack](#tech-stack)
@@ -175,7 +175,7 @@ house_gpt/
 
 ```bash
 # Clone the repo
-git clone https://github.com/yourorg/house-gpt.git
+git clone https://github.com/Far3s18/house-gpt.git
 cd house-gpt
 
 # Install dependencies
@@ -243,7 +243,7 @@ poetry run uvicorn house_gpt.api.v1.app:app --reload --port 8000
 
 ### Production (single GPU — recommended)
 
-> ⚠️ **Important**: Use `-w 1` on machines with limited VRAM. Running 4 workers loads Whisper + embeddings **4 times** — easily exceeding 6 GB VRAM. See [Known Issues](#known-issues--fixes).
+> **Important**: Use `-w 1` on machines with limited VRAM. Running 4 workers loads Whisper + embeddings **4 times** — easily exceeding 6 GB VRAM. See [Known Issues](#known-issues--fixes).
 
 ```bash
 PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True \
@@ -450,7 +450,7 @@ Managed by `MemoryManager` + `VectorStore`:
 
 ## Known Issues & Fixes
 
-### ❌ CUDA Out of Memory with `-w 4`
+### CUDA Out of Memory with `-w 4`
 
 **Symptom**
 ```
@@ -505,7 +505,7 @@ This frees ~500 MB–1 GB of VRAM per worker at the cost of slower transcription
 
 ---
 
-## 🚀 Roadmap
+## Roadmap
 
 The following capabilities are planned for upcoming releases:
 
